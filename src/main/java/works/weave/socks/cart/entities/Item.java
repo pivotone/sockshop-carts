@@ -3,14 +3,14 @@ package works.weave.socks.cart.entities;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import javax.validation.constraints.NotNull;
+//import javax.validation.constraints.NotNull;
 
 @Document
 public class Item {
     @Id
     private String id;
 
-    @NotNull(message = "Item Id must not be null")
+//    @NotNull(message = "Item Id must not be null")
     private String itemId;
     private int quantity;
     private float unitPrice;

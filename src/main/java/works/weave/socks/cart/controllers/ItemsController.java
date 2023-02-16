@@ -1,5 +1,9 @@
 package works.weave.socks.cart.controllers;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Extension;
+import io.swagger.annotations.ExtensionProperty;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +21,7 @@ import java.util.function.Supplier;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+@Api(tags = "items 操作")
 @RestController
 @RequestMapping(value = "/carts/{customerId:.*}/items")
 public class ItemsController {
@@ -29,20 +34,29 @@ public class ItemsController {
     @Autowired
     private CartDAO cartDAO;
 
+    @ApiOperation(value = "get item's infos from itemId and customerId",
+            extensions = @Extension(properties = {@ExtensionProperty(name = "x-forward-compatible-marker", value = "0")})
+    )
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(value = "/{itemId:.*}", produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @GetMapping(value = "/{itemId:.*}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Item get(@PathVariable String customerId, @PathVariable String itemId) {
         return new FoundItem(() -> getItems(customerId), () -> new Item(itemId)).get();
     }
 
+    @ApiOperation(value = "get item's infos from itemId",
+            extensions = @Extension(properties = {@ExtensionProperty(name = "x-forward-compatible-marker", value = "0")})
+    )
     @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.GET)
+    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<Item> getItems(@PathVariable String customerId) {
         return cartsController.get(customerId).contents();
     }
 
+    @ApiOperation(value = "save item's infos from customerId and itemId",
+            extensions = @Extension(properties = {@ExtensionProperty(name = "x-forward-compatible-marker", value = "1")})
+    )
     @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.POST)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public Item addToCart(@PathVariable String customerId, @RequestBody Item item) {
         // If the item does not exist in the cart, create new one in the repository.
         FoundItem foundItem = new FoundItem(() -> cartsController.get(customerId).contents(), () -> item);
@@ -59,8 +73,11 @@ public class ItemsController {
         }
     }
 
+    @ApiOperation(value = "delete item's infos from customerId and itemId",
+            extensions = @Extension(properties = {@ExtensionProperty(name = "x-forward-compatible-marker", value = "0")})
+    )
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @RequestMapping(value = "/{itemId:.*}", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/{itemId:.*}")
     public void removeItem(@PathVariable String customerId, @PathVariable String itemId) {
         FoundItem foundItem = new FoundItem(() -> getItems(customerId), () -> new Item(itemId));
         Item item = foundItem.get();
@@ -72,8 +89,11 @@ public class ItemsController {
         new ItemResource(itemDAO, () -> item).destroy().run();
     }
 
+    @ApiOperation(value = "update item's infos from customerId and a instance of item",
+            extensions = @Extension(properties = {@ExtensionProperty(name = "x-forward-compatible-marker", value = "0")})
+    )
     @ResponseStatus(HttpStatus.ACCEPTED)
-    @RequestMapping(consumes = MediaType.APPLICATION_JSON_VALUE, method = RequestMethod.PATCH)
+    @PatchMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     public void updateItem(@PathVariable String customerId, @RequestBody Item item) {
         // Merge old and new items
         ItemResource itemResource = new ItemResource(itemDAO, () -> get(customerId, item.itemId()));

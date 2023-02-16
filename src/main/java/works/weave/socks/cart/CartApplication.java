@@ -1,11 +1,11 @@
 package works.weave.socks.cart;
 
-import io.prometheus.client.spring.boot.EnablePrometheusEndpoint;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 
 @SpringBootApplication
-@EnablePrometheusEndpoint
+@EnableDiscoveryClient
 public class CartApplication {
     public static void main(String[] args) {
         SpringApplication.run(CartApplication.class, args);

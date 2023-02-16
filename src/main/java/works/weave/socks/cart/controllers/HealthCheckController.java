@@ -1,5 +1,9 @@
 package works.weave.socks.cart.controllers;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Extension;
+import io.swagger.annotations.ExtensionProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
@@ -13,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Api(tags = "活跃检测 操作")
 @RestController
 public class HealthCheckController {
 
@@ -21,6 +26,9 @@ public class HealthCheckController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, path = "/health")
+    @ApiOperation(value = "check health of this service",
+            extensions = @Extension(properties = {@ExtensionProperty(name = "x-forward-compatible-marker", value = "0")})
+    )
     public
     @ResponseBody
     Map<String, List<HealthCheck>> getHealth() {
