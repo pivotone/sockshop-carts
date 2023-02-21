@@ -78,7 +78,7 @@ public class ItemsController {
     )
     @ResponseStatus(HttpStatus.ACCEPTED)
     @DeleteMapping(value = "/{itemId:.*}")
-    public void removeItem(@PathVariable String customerId, @PathVariable String itemId) {
+    public String removeItem(@PathVariable String customerId, @PathVariable String itemId) {
         FoundItem foundItem = new FoundItem(() -> getItems(customerId), () -> new Item(itemId));
         Item item = foundItem.get();
 
@@ -87,6 +87,7 @@ public class ItemsController {
 
         LOG.debug("Removing item from repository: " + item);
         new ItemResource(itemDAO, () -> item).destroy().run();
+        return "success";
     }
 
     @ApiOperation(value = "update item's infos from customerId and a instance of item",

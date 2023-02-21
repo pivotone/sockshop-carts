@@ -35,8 +35,9 @@ public class CartsController {
             extensions = @Extension(properties = {@ExtensionProperty(name = "x-forward-compatible-marker", value = "1")})
     )
     @DeleteMapping (value = "/{customerId}")
-    public void delete(@PathVariable String customerId) {
+    public String delete(@PathVariable String customerId) {
         new CartResource(cartDAO, customerId).destroy().run();
+        return "success";
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -44,11 +45,12 @@ public class CartsController {
             extensions = @Extension(properties = {@ExtensionProperty(name = "x-forward-compatible-marker", value = "1")})
     )
     @GetMapping(value = "/{customerId}/merge")
-    public void mergeCarts(@PathVariable String customerId, @RequestParam(value = "sessionId") String sessionId) {
+    public String mergeCarts(@PathVariable String customerId, @RequestParam(value = "sessionId") String sessionId) {
         logger.debug("Merge carts request received for ids: " + customerId + " and " + sessionId);
         CartResource sessionCart = new CartResource(cartDAO, sessionId);
         CartResource customerCart = new CartResource(cartDAO, customerId);
         customerCart.merge(sessionCart.value().get()).run();
         delete(sessionId);
+        return "success";
     }
 }
