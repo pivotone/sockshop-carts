@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import works.weave.socks.cart.entities.HealthCheck;
+import works.weave.socks.cart.entities.Result;
+import works.weave.socks.cart.utils.ResultUtil;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -31,7 +33,7 @@ public class HealthCheckController {
     )
     public
     @ResponseBody
-    Map<String, List<HealthCheck>> getHealth() {
+    Result getHealth() {
        Map<String, List<HealthCheck>> map = new HashMap<String, List<HealthCheck>>();
        List<HealthCheck> healthChecks = new ArrayList<HealthCheck>();
        Date dateNow = Calendar.getInstance().getTime();
@@ -49,6 +51,6 @@ public class HealthCheckController {
        healthChecks.add(database);
 
        map.put("health", healthChecks);
-       return map;
+       return ResultUtil.success(map);
     }
 }

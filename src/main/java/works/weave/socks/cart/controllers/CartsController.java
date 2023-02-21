@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import works.weave.socks.cart.cart.CartDAO;
 import works.weave.socks.cart.cart.CartResource;
 import works.weave.socks.cart.entities.Cart;
+import works.weave.socks.cart.entities.Result;
+import works.weave.socks.cart.utils.ResultUtil;
 
 
 @Api(tags = "cart 操作")
@@ -26,8 +28,8 @@ public class CartsController {
     )
     @ResponseStatus(HttpStatus.OK)
     @GetMapping(value = "/{customerId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Cart get(@PathVariable String customerId) {
-        return new CartResource(cartDAO, customerId).value().get();
+    public Result get(@PathVariable String customerId) {
+        return ResultUtil.success(new CartResource(cartDAO, customerId).value().get());
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -35,8 +37,9 @@ public class CartsController {
             extensions = @Extension(properties = {@ExtensionProperty(name = "x-forward-compatible-marker", value = "1")})
     )
     @DeleteMapping (value = "/{customerId}")
-    public void delete(@PathVariable String customerId) {
+    public Result delete(@PathVariable String customerId) {
         new CartResource(cartDAO, customerId).destroy().run();
+        return ResultUtil.success();
     }
 
     @ResponseStatus(HttpStatus.ACCEPTED)
@@ -44,11 +47,12 @@ public class CartsController {
             extensions = @Extension(properties = {@ExtensionProperty(name = "x-forward-compatible-marker", value = "1")})
     )
     @GetMapping(value = "/{customerId}/merge")
-    public void mergeCarts(@PathVariable String customerId, @RequestParam(value = "sessionId") String sessionId) {
+    public Result mergeCarts(@PathVariable String customerId, @RequestParam(value = "sessionId") String sessionId) {
         logger.debug("Merge carts request received for ids: " + customerId + " and " + sessionId);
         CartResource sessionCart = new CartResource(cartDAO, sessionId);
         CartResource customerCart = new CartResource(cartDAO, customerId);
         customerCart.merge(sessionCart.value().get()).run();
         delete(sessionId);
+        return ResultUtil.success();
     }
 }
