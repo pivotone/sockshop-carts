@@ -16,6 +16,7 @@ spring:
       discovery:
         namespace: public
         server-addr: 39.104.112.98:8848
+        service: ${spring.application.name}-v@major.version@
 #spring.zipkin.baseUrl=http://${zipkin_host:zipkin}:9411/
 #spring.zipkin.enabled=${zipkin_enabled:false}
 #spring.cloud.nacos.discovery.server-addr=39.104.112.98:8848
