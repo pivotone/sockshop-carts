@@ -28,7 +28,7 @@ public class NacosMetadataConfig {
         System.out.println(version);
         metadata.put("version", version);
 
-        updateYaml();
+//        updateYaml();
 
 //        String name = environment.getProperty("spring.application.name");
 //        System.out.println(name);
